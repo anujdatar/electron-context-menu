@@ -11,5 +11,13 @@
     "ContextMenus"
   ],
   "author": "Anuj Datar <anuj.datar@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anujdatar/electron-context-menu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anujdatar/electron-context-menu/issues"
+  },
+  "homepage": "https://github.com/anujdatar/electron-context-menu#readme"
 }
