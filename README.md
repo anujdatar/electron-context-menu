@@ -25,8 +25,8 @@ buildContextMenu(prefix, suffix, menuType)
     Returns:
       Menu: Electron Menu
   */
-const buildContextMenu = remote.require('@anujdatar/electron-context-menu')
 
+const buildContextMenu = remote.require('@anujdatar/electron-context-menu')
 // for just simple menus no prefis or suffix in either menus
 buildContextMenu()  // simple copy_menu
 buildContextMenu({}, {}, 'editor') // for basic editor_menu
