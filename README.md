@@ -12,7 +12,7 @@ More complex menu for editable areas:
 You can also add prefixes and suffixes to either option.
 
 ```js
-buildContextMenu(prefix, suffix, menuType) {
+buildContextMenu(prefix, suffix, menuType)
   /*
     function generates context menu inside a browserwindow of an electron app
 
