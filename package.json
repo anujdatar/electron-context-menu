@@ -1,5 +1,5 @@
 {
-  "name": "electron-context-menu",
+  "name": "@anujdatar/electron-context-menu",
   "version": "1.0.1",
   "description": "Building simple context menus for Electron",
   "main": "src/index.js",
