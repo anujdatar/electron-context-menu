@@ -4,10 +4,10 @@ Right-click context menus for Electron.
 Detects context if click area is editable or not.
 
 Basic menu for uneditable areas:
-[copy_menu](/docs/copy_menu.png)
+![copy_menu](/docs/copy_menu.png)
 
 More complex menu for editable areas:
-[editor_menu](/docs/editor_menu.png)
+![editor_menu](/docs/editor_menu.png)
 
 You can also add prefixes and suffixes to either option.
 
