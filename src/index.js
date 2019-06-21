@@ -1,4 +1,4 @@
-const Menu = remote.require('electron').Menu
+const Menu = require('electron').Menu
 
 const cloneDeep = require('lodash.clonedeep')
 const defaults = require('lodash.defaults')
