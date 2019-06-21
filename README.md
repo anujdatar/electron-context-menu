@@ -87,3 +87,4 @@ Copyright 2019 Anuj Datar, licensed under MIT License
 ## TODO
 
 1. Add contexts for other type of elements, eg. images, etc.
+2. Any ideas?
