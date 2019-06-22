@@ -5,8 +5,6 @@
 ![Issues](https://img.shields.io/github/issues/anujdatar/electron-context-menu.svg)
 ![GitHub](https://img.shields.io/github/license/anujdatar/electron-context-menu.svg)
 
-
-
 Right-click context menus for Electron.
 Detects context if click area is editable or not.
 
