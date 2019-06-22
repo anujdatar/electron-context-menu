@@ -1,5 +1,12 @@
 # electron-context-menu
 
+![npm](https://img.shields.io/npm/v/@anujdatar/electron-context-menu.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/anujdatar/electron-context-menu/badge)](https://www.codefactor.io/repository/github/anujdatar/electron-context-menu)
+![Issues](https://img.shields.io/github/issues/anujdatar/electron-context-menu.svg)
+![GitHub](https://img.shields.io/github/license/anujdatar/electron-context-menu.svg)
+
+
+
 Right-click context menus for Electron.
 Detects context if click area is editable or not.
 
