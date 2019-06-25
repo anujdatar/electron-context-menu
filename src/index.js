@@ -50,6 +50,16 @@ const editorMenuTemplate = [
   }
 ]
 
+const noSuggestionsTemplate = {
+  exists: true,
+  menuItems: [
+    {
+      label: 'No Suggestions',
+      enabled: false
+    }
+  ]
+}
+
 const copyContextMenu = function () {
   /*
     builds menu in the clicked area with just one option "copy"
@@ -94,6 +104,7 @@ const reloadContextMenu = function () {
 
   return Menu.buildFromTemplate(template)
 }
+
 const buildContextMenu = function (prefix, suffix) {
   /*
     builds context menu in the clicked area in browserwindow of electron app
@@ -154,9 +165,12 @@ const buildContextMenu = function (prefix, suffix) {
   return Menu.buildFromTemplate(template)
 }
 
+const noSuggestionsMenu = buildContextMenu(noSuggestionsTemplate)
+
 module.exports = {
   buildContextMenu,
   copyContextMenu,
   pasteContextMenu,
-  reloadContextMenu
+  reloadContextMenu,
+  noSuggestionsMenu
 }
