@@ -1,8 +1,8 @@
-import Menu from 'electron.Menu'
-
 import cloneDeep from 'lodash.clonedeep'
 import defaults from 'lodash.defaults'
 import isEmpty from 'lodash.isempty'
+
+const Menu = require('electron').Menu
 
 const copyMenuTemplate = [
   {
