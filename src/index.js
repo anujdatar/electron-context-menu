@@ -11,6 +11,25 @@ const copyMenuTemplate = [
   }
 ]
 
+const pasteMenuTemplate = [
+  {
+    label: 'Paste',
+    role: 'paste'
+  },
+  { type: 'separator' },
+  {
+    label: 'Select All',
+    role: 'selectall'
+  }
+]
+
+const reloadMenuTemplate = [
+  {
+    label: 'Reload Page',
+    role: 'reload'
+  }
+]
+
 const editorMenuTemplate = [
   {
     label: 'Cut',
@@ -31,13 +50,6 @@ const editorMenuTemplate = [
   }
 ]
 
-const reloadMenuTemplate = [
-  {
-    label: 'Reload Page',
-    role: 'reload'
-  }
-]
-
 const copyContextMenu = function () {
   /*
     builds menu in the clicked area with just one option "copy"
@@ -49,6 +61,21 @@ const copyContextMenu = function () {
         copyContextMenu()
   */
   let template = cloneDeep(copyMenuTemplate)
+
+  return Menu.buildFromTemplate(template)
+}
+
+const pasteContextMenu = function () {
+  /*
+    builds menu in the clicked area with just "paste" and "selectAll"
+    in the browserwindow of electron app
+
+    Returns:
+      Menu: Electron Menu
+    Usage:
+        pasteContextMenu()
+  */
+  let template = cloneDeep(pasteMenuTemplate)
 
   return Menu.buildFromTemplate(template)
 }
@@ -130,5 +157,6 @@ const buildContextMenu = function (prefix, suffix) {
 module.exports = {
   buildContextMenu,
   copyContextMenu,
+  pasteContextMenu,
   reloadContextMenu
 }

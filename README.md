@@ -17,11 +17,12 @@ More complex menu for editable areas:
 ![editor_menu](/docs/editor_menu.png)
 
 You can also add prefixes and suffixes to either option.
-Three different menu options:
+Four different menu options:
 
   1. Simple menu with only "copy" option: copyContextMenu()
-  2. Simple menu with only "page reload" option: reloadContextMenu()
-  3. Customizable menus for editable text-areas: buildContextMenu()
+  2. Simple menu with "paste" and "selectall" options: pasteContextMenu()
+  3. Simple menu with only "page reload" option: reloadContextMenu()
+  4. Customizable menus for editable text-areas: buildContextMenu()
 
 ```js
 buildContextMenu(prefix, suffix)
@@ -57,26 +58,31 @@ const electron = require('electron')
 const remote = electron.remote
 const { buildContextMenu,
   copyContextMenu,
+  pasteContextMenu,
   reloadContextMenu } = remote.require('@anujdatar/electron-context-menu')
 
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault()
 
     let ctxMenu
-
-    if (window.getSelection().toString() === '') {
-      // if no text is selected
-      ctxMenu = new reloadContextMenu()
-      ctxMenu.popup(remote.getCurrentWindow())
-    } else {
-      // if some text is selected
-      if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
-        // if selected text is in non-editable area
-        ctxMenu = new copyContextMenu()
+    if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
+      // if click in uneditable area
+      if (window.getSelection().toString() === '') {
+        // if no text selected
+        ctxMenu = new reloadContextMenu()
         ctxMenu.popup(remote.getCurrentWindow())
       } else {
-        // if selected text is in editable area
-        // you can add menu prefixes and suffixes here if needed (eg. spellchecking)
+        // if text is selected
+        ctxMenu = new copyContextMenu()
+        ctxMenu.popup(remote.getCurrentWindow())
+      }
+    } else {
+      // if click in editable text area
+      if (window.getSelection().toString() === '') {
+        // if no text is selected
+        ctxMenu = new pasteContextMenu()
+        ctxMenu.popup(remote.getCurrentWindow())
+      } else {
         ctxMenu = new buildContextMenu()
         ctxMenu.popup(remote.getCurrentWindow())
       }
