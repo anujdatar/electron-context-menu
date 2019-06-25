@@ -17,12 +17,13 @@ More complex menu for editable areas:
 ![editor_menu](/docs/editor_menu.png)
 
 You can also add prefixes and suffixes to either option.
-Four different menu options:
+Different menu options:
 
-  1. Simple menu with only "copy" option: copyContextMenu()
-  2. Simple menu with "paste" and "selectall" options: pasteContextMenu()
-  3. Simple menu with only "page reload" option: reloadContextMenu()
-  4. Customizable menus for editable text-areas: buildContextMenu()
+- Simple menu with only "copy" option: **copyContextMenu()**
+- Simple menu with "paste" and "selectall" options: **pasteContextMenu()**
+- Simple menu with only "page reload" option: **reloadContextMenu()**
+- Menu when spell-check does not have suggestions: **noSuggestionsMenu()**
+- Customizable menus for editable text-areas: **buildContextMenu()**
 
 ```js
 buildContextMenu(prefix, suffix)

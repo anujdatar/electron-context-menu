@@ -50,6 +50,7 @@ const editorMenuTemplate = [
   }
 ]
 
+// template when spell check can't find suggestions
 const noSuggestionsTemplate = {
   exists: true,
   menuItems: [
@@ -165,6 +166,7 @@ const buildContextMenu = function (prefix, suffix) {
   return Menu.buildFromTemplate(template)
 }
 
+// menu object when spell check can't find suggestions
 const noSuggestionsMenu = buildContextMenu(noSuggestionsTemplate)
 
 module.exports = {
