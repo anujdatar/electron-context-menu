@@ -1,20 +1,13 @@
-const Menu = require('electron').Menu
+import Menu from 'electron.Menu'
 
-const cloneDeep = require('lodash.clonedeep')
-const defaults = require('lodash.defaults')
-const isEmpty = require('lodash.isempty')
+import cloneDeep from 'lodash.clonedeep'
+import defaults from 'lodash.defaults'
+import isEmpty from 'lodash.isempty'
 
 const copyMenuTemplate = [
   {
     label: 'Copy',
     role: 'copy'
-  },
-  {
-    type: 'separator'
-  },
-  {
-    label: 'Reload Page',
-    role: 'reload'
   }
 ]
 
@@ -33,27 +26,61 @@ const editorMenuTemplate = [
   }
 ]
 
-const buildContextMenu = function(prefix, suffix, menuType='copy') {
+const reloadMenuTemplate = [
+  {
+    label: 'Reload Page',
+    role: 'reload'
+  }
+]
+
+const copyContextMenu = function () {
+  /*
+    builds menu in the clicked area with just one option "copy"
+    in the browserwindow of electron app
+
+    Returns:
+      Menu: Electron Menu
+    Usage:
+        copyContextMenu()
+  */
+  let template = cloneDeep(copyMenuTemplate)
+
+  return Menu.buildFromTemplate(template)
+}
+
+const reloadContextMenu = function () {
+  /*
+    builds menu in the clicked area with just one option "reload"
+    in the browserwindow of electron app
+
+    Returns:
+      Menu: Electron Menu
+    Usage:
+        reloadContextMenu()
+  */
+  let template = cloneDeep(reloadMenuTemplate)
+
+  return Menu.buildFromTemplate(template)
+}
+const buildContextMenu = function (prefix, suffix) {
   /*
     builds context menu in the clicked area in browserwindow of electron app
 
     Args:
       prefix: Object - contains any prefix options required in the ctx menu
       suffix: Object - contains and suffix options required in the ctx menu
-      menuType: String - select between copy menu and editor menu
     Returns:
       Menu: Electron Menu
-    Examples:
+    Usage:
       for just simple menus no prefis or suffix in either menus
-        Copy: buildContextMenu()
-        Editor: buildContextMenu({}, {}, 'editor')
+        buildContextMenu({}, {})
       for menus with prefixs and or suffixes
-        Copy: buildContextMenu(prefix, suffix)
-        Editor: buildContextMenu({}, suffix, 'editor') - no prefix, only suffix
-      
+        buildContextMenu({}, suffix) - no prefix, only suffix
   */
 
-  let template = []
+  // deepClone makes sure the object is completely cleared and prevents
+  // redundent or repeated copies of menu items
+  let template = cloneDeep(editorMenuTemplate)
 
   prefix = defaults({}, prefix, {
     exists: false,
@@ -64,15 +91,6 @@ const buildContextMenu = function(prefix, suffix, menuType='copy') {
     exists: false,
     menuItems: []
   })
-
-  // deepClone makes sure the object is completely cleared and prevents
-  // redundent or repeated copies of the menu
-  if (menuType == 'copy') {
-    // if click not in editable area, can't use cut or paste, only open copy menu
-    template = cloneDeep(copyMenuTemplate)
-  } else {
-    template = cloneDeep(editorMenuTemplate)
-  }
 
   if (prefix.exists) {
     const prefixMenu = prefix.menuItems
@@ -91,7 +109,7 @@ const buildContextMenu = function(prefix, suffix, menuType='copy') {
   if (suffix.exists) {
     const suffixMenu = suffix.menuItems
     if (!isEmpty(suffixMenu)) {
-      template.push({type: 'separator'})
+      template.push({ type: 'separator' })
       template.push.apply(template, suffixMenu.map((item) => {
         return {
           label: item.label,
@@ -104,4 +122,8 @@ const buildContextMenu = function(prefix, suffix, menuType='copy') {
   return Menu.buildFromTemplate(template)
 }
 
-module.exports = buildContextMenu
+module.exports = {
+  buildContextMenu: buildContextMenu,
+  copyContextMenu: copyContextMenu,
+  reloadContextMenu: reloadContextMenu
+}
