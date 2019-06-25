@@ -17,27 +17,30 @@ More complex menu for editable areas:
 ![editor_menu](/docs/editor_menu.png)
 
 You can also add prefixes and suffixes to either option.
+Three different menu options:
+
+  1. Simple menu with only "copy" option: copyContextMenu()
+  2. Simple menu with only "page reload" option: reloadContextMenu()
+  3. Customizable menus for editable text-areas: buildContextMenu()
 
 ```js
-buildContextMenu(prefix, suffix, menuType)
+buildContextMenu(prefix, suffix)
   /*
     function generates context menu inside a browserwindow of an electron app
 
     Args:
       prefix: Object - contains any prefix options required in the ctx menu
       suffix: Object - contains and suffix options required in the ctx menu
-      menuType: String - select between "copy" menu and "editor" menu
     Returns:
       Menu: Electron Menu
   */
 
-const buildContextMenu = remote.require('@anujdatar/electron-context-menu')
-// for just simple menus no prefis or suffix in either menus
-buildContextMenu()  // simple copy_menu
-buildContextMenu({}, {}, 'editor') // for basic editor_menu
+// Usage
+
+buildContextMenu() // basic menu for editable areas
 // for menus with prefixs and or suffixes
-buildContextMenu(prefix, suffix) // complex copy_menu - prefix and suffix
-buildContextMenu({}, suffix, 'editor') // editor_menu - no prefix, only suffix
+buildContextMenu(prefix, suffix) // editor_menu - prefix and suffix
+buildContextMenu({}, suffix) // editor_menu - no prefix, only suffix
 ```
 
 ## Installation
@@ -46,28 +49,44 @@ buildContextMenu({}, suffix, 'editor') // editor_menu - no prefix, only suffix
 npm install @anujdatar/electron-context-menu
 ```
 
-## Usage
+## Usage example
 
 ```js
 // in renderer or preload script
 const electron = require('electron')
 const remote = electron.remote
-const buildContextMenu = remote.require('@anujdatar/electron-context-menu')
+const { buildContextMenu,
+  copyContextMenu,
+  reloadContextMenu } = remote.require('@anujdatar/electron-context-menu')
 
-window.addEventListener('contextmenu', function(e) {
-  let ctxMenu
-  if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
-    ctxMenu = new ctxMenuBuilder()
-  } else {
-    ctxMenu = new ctxMenuBuilder({}, {}, '')
-  }
-  ctxMenu.popup(remote.getCurrentWindow())
-})
+window.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+
+    let ctxMenu
+
+    if (window.getSelection().toString() === '') {
+      // if no text is selected
+      ctxMenu = new reloadContextMenu()
+      ctxMenu.popup(remote.getCurrentWindow())
+    } else {
+      // if some text is selected
+      if (!e.target.closest('textarea, input, [contenteditable="true"]')) {
+        // if selected text is in non-editable area
+        ctxMenu = new copyContextMenu()
+        ctxMenu.popup(remote.getCurrentWindow())
+      } else {
+        // if selected text is in editable area
+        // you can add menu prefixes and suffixes here if needed (eg. spellchecking)
+        ctxMenu = new buildContextMenu()
+        ctxMenu.popup(remote.getCurrentWindow())
+      }
+    }
+  })
 ```
 
 ### Menu Customization
 
-  adding *prefixs* or *suffixs* to the context menu
+  adding *prefix* or *suffix* menu items to the context menu
   prefix and suffix: objects
     @param: exists - boolean - *true* when you need to add menu prefix
     @param menuItems - array - containing objects
@@ -77,6 +96,7 @@ window.addEventListener('contextmenu', function(e) {
       }
 
   ```js
+  // example
   prefix = {
     exists: true,
     menuItems: []

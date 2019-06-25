@@ -23,6 +23,11 @@ const editorMenuTemplate = [
   {
     label: 'Paste',
     role: 'paste'
+  },
+  { type: 'separator' },
+  {
+    label: 'Select All',
+    role: 'selectall'
   }
 ]
 
@@ -123,7 +128,7 @@ const buildContextMenu = function (prefix, suffix) {
 }
 
 module.exports = {
-  buildContextMenu: buildContextMenu,
-  copyContextMenu: copyContextMenu,
-  reloadContextMenu: reloadContextMenu
+  buildContextMenu,
+  copyContextMenu,
+  reloadContextMenu
 }
