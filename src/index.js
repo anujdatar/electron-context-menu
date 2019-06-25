@@ -1,9 +1,5 @@
-// const Menu = require('electron').Menu
 import Menu from 'electron.Menu'
 
-// const cloneDeep = require('lodash.clonedeep')
-// const defaults = require('lodash.defaults')
-// const isEmpty = require('lodash.isempty')
 import cloneDeep from 'lodash.clonedeep'
 import defaults from 'lodash.defaults'
 import isEmpty from 'lodash.isempty'
