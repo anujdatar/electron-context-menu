@@ -1,178 +1,52 @@
-import cloneDeep from 'lodash.clonedeep'
-import defaults from 'lodash.defaults'
-import isEmpty from 'lodash.isempty'
+import { templates } from './menuTemplates'
+import { BuildContextMenu } from './buildContextMenu'
+import { spellChecker } from 'spellchecker'
 
-const Menu = require('electron').Menu
-
-const copyMenuTemplate = [
-  {
-    label: 'Copy',
-    role: 'copy'
-  }
-]
-
-const pasteMenuTemplate = [
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
-  { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
-]
-
-const reloadMenuTemplate = [
-  {
-    label: 'Reload Page',
-    role: 'reload'
-  }
-]
-
-const editorMenuTemplate = [
-  {
-    label: 'Cut',
-    role: 'cut'
-  },
-  {
-    label: 'Copy',
-    role: 'copy'
-  },
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
-  { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
-]
-
-// template when spell check can't find suggestions
-const noSuggestionsTemplate = {
-  exists: true,
-  menuItems: [
-    {
-      label: 'No Suggestions',
-      enabled: false
+const buildMenus = function (editable) {
+  let ctxMenu
+  if (!editable) {
+    // if right click in uneditable area
+    if (window.getSelection().toString() === '') {
+      // if no text is selected
+      ctxMenu = new BuildContextMenu(templates.reload)
+    } else {
+      // if text is selected
+      ctxMenu = new BuildContextMenu(templates.copy)
     }
-  ]
-}
-
-const copyContextMenu = function () {
-  /*
-    builds menu in the clicked area with just one option "copy"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        copyContextMenu()
-  */
-  let template = cloneDeep(copyMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
-}
-
-const pasteContextMenu = function () {
-  /*
-    builds menu in the clicked area with just "paste" and "selectAll"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        pasteContextMenu()
-  */
-  let template = cloneDeep(pasteMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
-}
-
-const reloadContextMenu = function () {
-  /*
-    builds menu in the clicked area with just one option "reload"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        reloadContextMenu()
-  */
-  let template = cloneDeep(reloadMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
-}
-
-const buildContextMenu = function (prefix, suffix) {
-  /*
-    builds context menu in the clicked area in browserwindow of electron app
-
-    Args:
-      prefix: Object - contains any prefix options required in the ctx menu
-      suffix: Object - contains and suffix options required in the ctx menu
-    Returns:
-      Menu: Electron Menu
-    Usage:
-      for just simple menus no prefis or suffix in either menus
-        buildContextMenu({}, {})
-      for menus with prefixs and or suffixes
-        buildContextMenu({}, suffix) - no prefix, only suffix
-  */
-
-  // deepClone makes sure the object is completely cleared and prevents
-  // redundent or repeated copies of menu items
-  let template = cloneDeep(editorMenuTemplate)
-
-  prefix = defaults({}, prefix, {
-    exists: false,
-    menuItems: []
-  })
-
-  suffix = defaults({}, suffix, {
-    exists: false,
-    menuItems: []
-  })
-
-  if (prefix.exists) {
-    const prefixMenu = prefix.menuItems
-    if (!isEmpty(prefixMenu)) {
-      template.unshift.apply(template, prefixMenu.map((item) => {
-        return {
-          label: item.label,
-          click: item.click
+  } else {
+    // if right click in editable textarea
+    if (window.getSelection().toString() === '') {
+      // no text is selected in editable textarea
+      ctxMenu = new BuildContextMenu(templates.paste)
+    } else {
+      // some text is selected in editable textarea
+      const selection = window.getSelection().toString()
+      if (!spellChecker.isMispelled(selection)) {
+        // selected word is spelled correctly
+        ctxMenu = new BuildContextMenu(templates.editor)
+      } else {
+        // selected word is misspelled
+        let suggestions = spellChecker.getCorrectionsForMisspelling(selection)
+        if (suggestions.length === 0) {
+          // no suggestions foing in dictionary
+          ctxMenu = new BuildContextMenu(templates.editor, templates.noSuggest)
+        } else {
+          // suggestions were found
+          suggestions = suggestions.slice(0, 3)
+          // build list of suggestion menu items with their click functions
+          const suggestedItemList = suggestions.map((suggestion) => {
+            let menuItem = new templates.SuggestionMenuItem(suggestion)
+            return menuItem.item
+          })
+          // build suggestions template object and pass to BuildContextMenu as prefix
+          const suggestedMenu = new templates.SuggestionsMenuTemplate(suggestedItemList)
+          ctxMenu = new BuildContextMenu(templates.editor, suggestedMenu.menu)
         }
-      }).concat({
-        type: 'separator'
-      }))
+      }
     }
   }
 
-  if (suffix.exists) {
-    const suffixMenu = suffix.menuItems
-    if (!isEmpty(suffixMenu)) {
-      template.push({ type: 'separator' })
-      template.push.apply(template, suffixMenu.map((item) => {
-        return {
-          label: item.label,
-          click: item.click
-        }
-      }))
-    }
-  }
-
-  return Menu.buildFromTemplate(template)
+  return ctxMenu
 }
 
-// menu object when spell check can't find suggestions
-const noSuggestionsMenu = buildContextMenu(noSuggestionsTemplate)
-
-module.exports = {
-  buildContextMenu,
-  copyContextMenu,
-  pasteContextMenu,
-  reloadContextMenu,
-  noSuggestionsMenu
-}
+export { buildMenus }
