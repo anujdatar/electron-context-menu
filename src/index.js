@@ -7,28 +7,28 @@ const buildMenus = function (editable, spellChecker) {
     // if right click in uneditable area
     if (window.getSelection().toString() === '') {
       // if no text is selected
-      ctxMenu = new BuildContextMenu(templates.reload)
+      ctxMenu = BuildContextMenu(templates.reload)
     } else {
       // if text is selected
-      ctxMenu = new BuildContextMenu(templates.copy)
+      ctxMenu = BuildContextMenu(templates.copy)
     }
   } else {
     // if right click in editable textarea
     if (window.getSelection().toString() === '') {
       // no text is selected in editable textarea
-      ctxMenu = new BuildContextMenu(templates.paste)
+      ctxMenu = BuildContextMenu(templates.paste)
     } else {
       // some text is selected in editable textarea
       const selection = window.getSelection().toString()
       if (!spellChecker.isMisspelled(selection)) {
         // selected word is spelled correctly
-        ctxMenu = new BuildContextMenu(templates.editor)
+        ctxMenu = BuildContextMenu(templates.editor)
       } else {
         // selected word is misspelled
         let suggestions = spellChecker.getCorrectionsForMisspelling(selection)
         if (suggestions.length === 0) {
           // no suggestions foing in dictionary
-          ctxMenu = new BuildContextMenu(templates.editor, templates.noSuggest)
+          ctxMenu = BuildContextMenu(templates.editor, templates.noSuggest)
         } else {
           // suggestions were found
           suggestions = suggestions.slice(0, 3)
@@ -39,7 +39,7 @@ const buildMenus = function (editable, spellChecker) {
           })
           // build suggestions template object and pass to BuildContextMenu as prefix
           const suggestedMenu = new templates.SuggestionsMenuTemplate(suggestedItemList)
-          ctxMenu = new BuildContextMenu(templates.editor, suggestedMenu.menu)
+          ctxMenu = BuildContextMenu(templates.editor, suggestedMenu.menu)
         }
       }
     }

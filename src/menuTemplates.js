@@ -1,49 +1,25 @@
 const remote = require('electron').remote
 
 const copyMenuTemplate = [
-  {
-    label: 'Copy',
-    role: 'copy'
-  }
+  { role: 'copy' }
 ]
 
 const pasteMenuTemplate = [
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
+  { role: 'paste' },
   { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
+  { role: 'selectall' }
 ]
 
 const reloadMenuTemplate = [
-  {
-    label: 'Reload Page',
-    role: 'reload'
-  }
+  { role: 'reload' }
 ]
 
 const editorMenuTemplate = [
-  {
-    label: 'Cut',
-    role: 'cut'
-  },
-  {
-    label: 'Copy',
-    role: 'copy'
-  },
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
+  { role: 'cut' },
+  { role: 'copy' },
+  { role: 'paste' },
   { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
+  { role: 'selectall' }
 ]
 
 // template when spell check can't find suggestions
