@@ -1,8 +1,7 @@
 import { templates } from './menuTemplates'
 import { BuildContextMenu } from './buildContextMenu'
-import { spellChecker } from 'spellchecker'
 
-const buildMenus = function (editable) {
+const buildMenus = function (editable, spellChecker) {
   let ctxMenu
   if (!editable) {
     // if right click in uneditable area
@@ -21,7 +20,7 @@ const buildMenus = function (editable) {
     } else {
       // some text is selected in editable textarea
       const selection = window.getSelection().toString()
-      if (!spellChecker.isMispelled(selection)) {
+      if (!spellChecker.isMisspelled(selection)) {
         // selected word is spelled correctly
         ctxMenu = new BuildContextMenu(templates.editor)
       } else {
