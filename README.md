@@ -12,37 +12,50 @@ Basic menu for uneditable areas:
 
 ![copy_menu](/docs/copy_menu.png)
 
-More complex menu for editable areas:
+More complex menu for editable areas with spellcheck options:
 
-![editor_menu](/docs/editor_menu.png)
+![spellcheck_menu](/docs/spellcheck_menu.png)
 
-You can also add prefixes and suffixes to either option.
-Different menu options:
+Module exports a function to build electron context menus and a set of templates and classes to help build/customize said menus. Module exports:
 
-- Simple menu with only "copy" option: **copyContextMenu()**
-- Simple menu with "paste" and "selectall" options: **pasteContextMenu()**
-- Simple menu with only "page reload" option: **reloadContextMenu()**
-- Menu when spell-check does not have suggestions: **noSuggestionsMenu()**
-- Customizable menus for editable text-areas: **buildContextMenu()**
+Menu templates:
+
+- copy: just "copy" option in menu
+- paste: "paste" and "selectAll"
+- reload: just "page reload"
+- editor: "cut/copy/paste" and "selectAll"
+- noSuggest: disabled option for when spell checker cannot find any suggested corrections
+
+Classes:
+
+- SuggestionMenuItem: constructor for single menu item for one spelling correction at a time, accepts string
+- MenuTemplate: constructor for menu prefix or suffix object
+
+Function:
+
+- BuildContextMenu(): builds context menus based on arguments
 
 ```js
-buildContextMenu(prefix, suffix)
+BuildContextMenu(menuTemplate, prefix, suffix)
   /*
     function generates context menu inside a browserwindow of an electron app
 
     Args:
-      prefix: Object - contains any prefix options required in the ctx menu
-      suffix: Object - contains and suffix options required in the ctx menu
+      menuTemplate (optional): Array - contains a list of menu objects. defaults to editor menu template if no argument is passed
+      prefix (optional): Object - contains any prefix options required in the ctx menu
+      suffix (optional): Object - contains and suffix options required in the ctx menu
     Returns:
       Menu: Electron Menu
   */
 
 // Usage
 
-buildContextMenu() // basic menu for editable areas
+buildContextMenu() or buildContextMenu(menuTemplates.editor) // editor_menu for editable textareas
+buildContextMenu(menuTemplates.paste) // paste_menu
 // for menus with prefixs and or suffixes
-buildContextMenu(prefix, suffix) // editor_menu - prefix and suffix
-buildContextMenu({}, suffix) // editor_menu - no prefix, only suffix
+buildContextMenu(menuTemplates.editor, prefix, suffix) // editor_menu - prefix and suffix
+buildContextMenu(menuTemplates.copy, prefix) // copy_menu and prefix only
+buildContextMenu(menuTemplates.editor, {}, suffix) // editor_menu w/ only suffix, no prefix
 ```
 
 ## Installation
@@ -53,14 +66,13 @@ npm install @anujdatar/electron-context-menu
 
 ## Usage example
 
+See [example folder](/example) for details
+
 ```js
 // in renderer or preload script
 const electron = require('electron')
 const remote = electron.remote
-const { buildContextMenu,
-  copyContextMenu,
-  pasteContextMenu,
-  reloadContextMenu } = remote.require('@anujdatar/electron-context-menu')
+const { BuildContextMenu, menuTemplates } = require('@anujdatar/electron-context-menu')
 
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault()
@@ -70,28 +82,29 @@ window.addEventListener('contextmenu', (e) => {
       // if click in uneditable area
       if (window.getSelection().toString() === '') {
         // if no text selected
-        ctxMenu = new reloadContextMenu()
-        ctxMenu.popup(remote.getCurrentWindow())
+        ctxMenu = new BuildContextMenu(menuTemplates.reload)
       } else {
         // if text is selected
-        ctxMenu = new copyContextMenu()
-        ctxMenu.popup(remote.getCurrentWindow())
+        ctxMenu = new BuildContextMenu(menuTemplates.copy)
       }
     } else {
       // if click in editable text area
       if (window.getSelection().toString() === '') {
         // if no text is selected
-        ctxMenu = new pasteContextMenu()
-        ctxMenu.popup(remote.getCurrentWindow())
+        ctxMenu = new BuildContextMenu(menuTemplates.paste)
       } else {
-        ctxMenu = new buildContextMenu()
-        ctxMenu.popup(remote.getCurrentWindow())
+        ctxMenu = new BuildContextMenu()
       }
     }
+    // popup menu
+    ctxMenu.popup(remote.getCurrentWindow())
   })
 ```
 
 ### Menu Customization
+
+  passing custom template
+  menuTemplate: Array containing Electron.MenuItem(s)
 
   adding *prefix* or *suffix* menu items to the context menu
   prefix and suffix: objects
@@ -103,7 +116,24 @@ window.addEventListener('contextmenu', (e) => {
       }
 
   ```js
-  // example
+  // examples
+  menuTemplate = [
+    {
+      label: 'Copy',
+      role: 'copy'
+    },
+    {
+      role: 'paste'
+    },
+    {
+      label: 'Some function',
+      click: function () {
+        //do something
+        console.log('Did something')
+      }
+    }
+  ]
+
   prefix = {
     exists: true,
     menuItems: []
