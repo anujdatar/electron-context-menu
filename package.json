@@ -8,8 +8,8 @@
     "build": "npm run clean-slate && babel src --out-dir lib",
     "test": "echo \"No test specified\"",
     "lint": "eslint --config .eslintrc.js src/**",
-    "electron-rebuild": "electron-rebuild -f -w spellchecker",
-    "example": "electron ./example/main.js"
+    "install-example": "cd example && npm install",
+    "start-example": "cd example && npm start"
   },
   "keywords": [
     "Electron",
@@ -29,16 +29,12 @@
     "@babel/polyfill": "^7.4.4",
     "lodash.clonedeep": "^4.5.0",
     "lodash.defaults": "^4.2.0",
-    "lodash.isempty": "^4.4.0",
-    "spellchecker": "^3.6.1"
+    "lodash.isempty": "^4.4.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "electron": "^5.0.6",
-    "electron-rebuild": "^1.8.5",
-    "electron-store": "^4.0.0",
     "eslint": "^6.0.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.18.0",

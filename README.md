@@ -58,15 +58,30 @@ buildContextMenu(menuTemplates.copy, prefix) // copy_menu and prefix only
 buildContextMenu(menuTemplates.editor, {}, suffix) // editor_menu w/ only suffix, no prefix
 ```
 
-## Installation
+## Installation and testing
 
-```js
+### Installing and using package with your project
+
+```bash
 npm install @anujdatar/electron-context-menu
 ```
 
+### testing the included example electron app
+
+```bash
+git clone https://github.com/anujdatar/electron-context-menu.git
+cd electron-context-menu
+npm install
+
+npm run install-example
+npm run start-example
+```
+
+installing node modules for example also rebuilds node-spellchecker using electron-rebuild.
+
 ## Usage example
 
-See [example folder](/example) for details
+See [example folder](/example) for more details
 
 ```js
 // in renderer or preload script
@@ -116,7 +131,7 @@ window.addEventListener('contextmenu', (e) => {
       }
 
   ```js
-  // examples
+  // examples of function params for customization
   menuTemplate = [
     {
       label: 'Copy',
