@@ -2,103 +2,84 @@ import cloneDeep from 'lodash.clonedeep'
 import defaults from 'lodash.defaults'
 import isEmpty from 'lodash.isempty'
 
-const Menu = require('electron').Menu
+const remote = require('electron').remote
+const Menu = remote.require('electron').Menu
 
+// defining default menu templates **********************************
 const copyMenuTemplate = [
-  {
-    label: 'Copy',
-    role: 'copy'
-  }
+  { role: 'copy' }
 ]
 
 const pasteMenuTemplate = [
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
+  { role: 'paste' },
   { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
+  { role: 'selectall' }
 ]
 
 const reloadMenuTemplate = [
-  {
-    label: 'Reload Page',
-    role: 'reload'
-  }
+  { role: 'reload' }
 ]
 
 const editorMenuTemplate = [
-  {
-    label: 'Cut',
-    role: 'cut'
-  },
-  {
-    label: 'Copy',
-    role: 'copy'
-  },
-  {
-    label: 'Paste',
-    role: 'paste'
-  },
+  { role: 'cut' },
+  { role: 'copy' },
+  { role: 'paste' },
   { type: 'separator' },
-  {
-    label: 'Select All',
-    role: 'selectall'
-  }
+  { role: 'selectall' }
 ]
 
-const copyContextMenu = function () {
-  /*
-    builds menu in the clicked area with just one option "copy"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        copyContextMenu()
-  */
-  let template = cloneDeep(copyMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
+// template when spell check can't find suggestions
+const noSuggestionsTemplate = {
+  exists: true,
+  menuItems: [
+    {
+      label: 'No Suggestions',
+      enabled: false
+    }
+  ]
 }
 
-const pasteContextMenu = function () {
-  /*
-    builds menu in the clicked area with just "paste" and "selectAll"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        pasteContextMenu()
-  */
-  let template = cloneDeep(pasteMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
+// individual suggestion menu item prototype
+class SuggestionMenuItem {
+  constructor (correction) {
+    if (typeof correction !== 'string') {
+      throw new Error('SuggestionMenuItem: parameter must be a string')
+    }
+    this.item = {
+      label: correction,
+      click: function () {
+        remote.getCurrentWebContents().replaceMisspelling(correction)
+      }
+    }
+  }
 }
 
-const reloadContextMenu = function () {
-  /*
-    builds menu in the clicked area with just one option "reload"
-    in the browserwindow of electron app
-
-    Returns:
-      Menu: Electron Menu
-    Usage:
-        reloadContextMenu()
-  */
-  let template = cloneDeep(reloadMenuTemplate)
-
-  return Menu.buildFromTemplate(template)
+// prefix or suffix menu template
+class MenuTemplate {
+  constructor (list) {
+    this.menu = {
+      exists: true,
+      menuItems: list
+    }
+  }
 }
-const buildContextMenu = function (prefix, suffix) {
+
+const menuTemplates = {
+  copy: copyMenuTemplate,
+  editor: editorMenuTemplate,
+  noSuggest: noSuggestionsTemplate,
+  paste: pasteMenuTemplate,
+  reload: reloadMenuTemplate,
+  SuggestionMenuItem: SuggestionMenuItem,
+  MenuTemplate: MenuTemplate
+}
+
+const BuildContextMenu = function (menuTemplate = editorMenuTemplate, prefix, suffix) {
   /*
     builds context menu in the clicked area in browserwindow of electron app
 
     Args:
+      menuTemplate: Object - contains template for basic underlying menu
       prefix: Object - contains any prefix options required in the ctx menu
       suffix: Object - contains and suffix options required in the ctx menu
     Returns:
@@ -112,8 +93,10 @@ const buildContextMenu = function (prefix, suffix) {
 
   // deepClone makes sure the object is completely cleared and prevents
   // redundent or repeated copies of menu items
-  let template = cloneDeep(editorMenuTemplate)
+  let template = cloneDeep(menuTemplate)
 
+  // defaults for prefix and suffix menu objects
+  // in case no suffix or prefix items are passed into constructor
   prefix = defaults({}, prefix, {
     exists: false,
     menuItems: []
@@ -124,6 +107,7 @@ const buildContextMenu = function (prefix, suffix) {
     menuItems: []
   })
 
+  // attach prefix items to menu template
   if (prefix.exists) {
     const prefixMenu = prefix.menuItems
     if (!isEmpty(prefixMenu)) {
@@ -138,6 +122,7 @@ const buildContextMenu = function (prefix, suffix) {
     }
   }
 
+  // attach suffix items to menu template
   if (suffix.exists) {
     const suffixMenu = suffix.menuItems
     if (!isEmpty(suffixMenu)) {
@@ -155,8 +140,6 @@ const buildContextMenu = function (prefix, suffix) {
 }
 
 module.exports = {
-  buildContextMenu,
-  copyContextMenu,
-  pasteContextMenu,
-  reloadContextMenu
+  BuildContextMenu,
+  menuTemplates
 }
