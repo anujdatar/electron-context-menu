@@ -69,19 +69,18 @@ npm install @anujdatar/electron-context-menu
 ### testing the included example electron app
 
 ```bash
-git clone https://github.com/anujdatar/electron-context-menu.git
-cd electron-context-menu
+git clone https://github.com/anujdatar/electron-context-menu-example.git
+cd electron-context-menu-example
 npm install
 
-npm run install-example
-npm run start-example
+npm start
 ```
 
 installing node modules for example also rebuilds node-spellchecker using electron-rebuild.
 
 ## Usage example
 
-See [example folder](/example) for more details
+See [example-repository](https://github.com/anujdatar/electron-context-menu-example.git) for more details
 
 ```js
 // in renderer or preload script
